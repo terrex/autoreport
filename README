@@ -1,0 +1,12 @@
+autoreport for django
+=====================
+
+How to use it
+-------------
+
+  Install it adding 'autoreport' to INSTALLED_APPS in your settings,
+  (it requires running syncdb again).
+
+  Then, add a line like this to your main URLConf:
+
+    (r'^autoreport/', include('autoreport.urls')),
