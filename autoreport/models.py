@@ -5,7 +5,8 @@ from django.db import models
 from django.db.models import get_models
 from django.shortcuts import render_to_response
 from django.template.defaultfilters import slugify
-import relatorio
+
+from relatorio.templates.opendocument import Template
 
 __all__ = ('Report',)
 
@@ -64,10 +65,8 @@ class Report(models.Model):
         locals_ = locals()
         locals_.update(dict([(x.__name__, x) for x in get_models()]))
         locals_.update({'form': form_data})
-        repository = relatorio.ReportRepository()
-        repository.add_report(dict, self._formats['odt'], self.template.path, report_name=self.short_name())
-        report, _ = repository.reports[dict].get(self.short_name())
-        response = http.HttpResponse(report(**eval(self.params, globals(), locals_)).render().getvalue(), mimetype=self._formats[format])
+        report = Template(source=None, filepath=self.template.path)
+        response = http.HttpResponse(report.generate(**eval(self.params, globals(), locals_)).render().getvalue(), mimetype=self._formats[format])
         response['Content-Disposition'] = 'attachment; filename=%s.%s' % (self.short_name(), format)
         return response
 
