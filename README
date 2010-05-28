@@ -1,12 +1,20 @@
 autoreport for django
 =====================
 
+Requirements
+------------
+  Tested with Django 1.1.1.
+  Requires relatorio.
+
 How to use it
 -------------
 
-  Install it adding 'autoreport' to INSTALLED_APPS in your settings,
-  (it requires running syncdb again).
+  Install it by adding 'autoreport' to INSTALLED_APPS in your settings,
+  (it requires running syncdb again for new models to be installed).
 
-  Then, add a line like this to your main URLConf:
+  Then, add a line like this into your main URLConf:
 
     (r'^autoreport/', include('autoreport.urls')),
+
+  You should overwrite templates from autoreport's templates folder
+  in order to match your project.

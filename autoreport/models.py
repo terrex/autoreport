@@ -1,3 +1,6 @@
+import os.path
+import random
+
 from django import forms
 from django import http
 from django import template
@@ -15,9 +18,12 @@ class Dict(dict):
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
 
+def gen_upload_to(instance, filename):
+    return os.path.join(instance.__class__.__name__, str(random.randint(1, 2**31)), filename)
+
 class Report(models.Model):
     """Represents a relatorio report, with custom fields and params"""
-    template = models.FileField(upload_to='report/')
+    template = models.FileField(upload_to=gen_upload_to)
     name = models.CharField(max_length=255)
     fields = models.TextField(default="{}", help_text="""
         You can use `forms.&lt;Field&gt;` to refers FormField classes of
