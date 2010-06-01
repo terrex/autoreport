@@ -12,7 +12,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(name='autoreport',
-    version='0.1',
+    version='0.1.1',
     description='Self-made relatorio reports for Django',
     author=u'Guillermo Gutiérrez',
     author_email='xiterrex@gmail.com',
