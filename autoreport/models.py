@@ -80,7 +80,7 @@ class Report(models.Model):
             context_processor = getattr(import_module(path[:i]), path[i+1:])
         else:
             context_processor = lambda d: d
-        response = http.HttpResponse(report.generate(**context_processor(eval(params, globals(), locals_))).render().getvalue(), mimetype=self._formats[format])
+        response = http.HttpResponse(report.generate(**context_processor(eval(self.params, globals(), locals_))).render().getvalue(), mimetype=self._formats[format])
         response['Content-Disposition'] = 'attachment; filename=%s.%s' % (self.short_name(), format)
         return response
 
