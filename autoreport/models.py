@@ -4,10 +4,12 @@ import random
 from django import forms
 from django import http
 from django import template
+from django.conf import settings
 from django.db import models
 from django.db.models import get_models
 from django.shortcuts import render_to_response
 from django.template.defaultfilters import slugify
+from django.utils.importlib import import_module
 
 from relatorio.templates.opendocument import Template
 
@@ -72,7 +74,13 @@ class Report(models.Model):
         locals_.update(dict([(x.__name__, x) for x in get_models()]))
         locals_.update({'form': form_data})
         report = Template(source=None, filepath=self.template.path)
-        response = http.HttpResponse(report.generate(**eval(self.params, globals(), locals_)).render().getvalue(), mimetype=self._formats[format])
+        if hasattr(settings, 'AUTOREPORT_CONTEXT_PROCESSOR'):
+            path = settings.AUTOREPORT_CONTEXT_PROCESSOR
+            i = path.rfind('.')
+            params = getattr(import_module(path[:i]), path[i+1:])(self.params)
+        else:
+            params = self.params
+        response = http.HttpResponse(report.generate(**eval(params, globals(), locals_)).render().getvalue(), mimetype=self._formats[format])
         response['Content-Disposition'] = 'attachment; filename=%s.%s' % (self.short_name(), format)
         return response
 
