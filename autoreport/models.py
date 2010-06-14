@@ -77,10 +77,10 @@ class Report(models.Model):
         if hasattr(settings, 'AUTOREPORT_CONTEXT_PROCESSOR'):
             path = settings.AUTOREPORT_CONTEXT_PROCESSOR
             i = path.rfind('.')
-            params = getattr(import_module(path[:i]), path[i+1:])(self.params)
+            context_processor = getattr(import_module(path[:i]), path[i+1:])
         else:
-            params = self.params
-        response = http.HttpResponse(report.generate(**eval(params, globals(), locals_)).render().getvalue(), mimetype=self._formats[format])
+            context_processor = lambda d: d
+        response = http.HttpResponse(report.generate(**context_processor(eval(params, globals(), locals_))).render().getvalue(), mimetype=self._formats[format])
         response['Content-Disposition'] = 'attachment; filename=%s.%s' % (self.short_name(), format)
         return response
 
